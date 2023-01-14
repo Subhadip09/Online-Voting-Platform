@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <title><%=title%></title>
+  <script>
+    var token = document
+      .querySelector('meta[name="csrf-token"]')
+      .getAttribute("content");
+    function deleteElection(id) {
+      console.log("deleting");
+      fetch(`/home/election/${id}/delete`, {
+        method: "delete",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({
+          "_csrf": token
+        })
+      })
+        .then((res) => {
+          if (res.ok) {
+            window.open("/home", "_self")
+          }
+        })
+        .catch((err) => console.error(err));
+    }
+  </script>
+</head>
+<body>
+    <% const e_title = title + ": " + election.name%>
+    <%- include("header", {text: e_title, signOutVis: true })%>
+    <% if(messages && messages.error && messages.error.length > 0)  { %>
+        <% for(var i = 0; i < messages.error.length; i++) { %>
+          <p class="bg-green-400 m-5 rounded px-4 py-2"><%= messages.error[i] %></p>
+        <% } %>
+    <% } %>
+    <div class="flex items-center justify-start m-5">
+        <a href="../" class="text-xl text-white bg-blue-800 rounded-xl p-2 mr-5 w-40 text-center">Back</a>
+        <a href="./<%=election.id%>/name" class="text-xl text-white bg-amber-600 rounded-xl p-2 mr-5 w-40 text-center">Update Election</a>
+        <a href="#" onclick="deleteElection(`<%= election.id%>`)" class="text-xl text-white bg-red-600 rounded-xl p-2 mr-5 w-40 text-center">Delete Election</a>
+    </div>
+    <div class="flex items-center justify-between rounded-3xl bg-gray-200 m-5 p-5">
+    <p class="text-2xl text-gray-800">You have <%=question.length%> Questions in this Election</p>
+    <a href="<%=election.id%>/question" class="text-2xl text-white bg-green-600 rounded-xl p-2 w-56 text-center">Manage Questions</a>
+  </div>
+  <div class="flex items-center justify-between rounded-3xl bg-gray-200 m-5 p-5">
+    <p class="text-2xl text-gray-800">You have <%=voterLength%> Voters in this Election</p>
+    <a href="<%=election.id%>/addvoters" class="text-2xl text-white bg-green-600 rounded-xl p-2 w-56 text-center">Manage Voters</a>
+  </div>
+  <div class="flex items-center justify-start m-5">
+    <a href="/home/election/<%=election.id%>/preview" class="text-xl text-white bg-amber-600 rounded-xl p-2 mr-5 w-40 text-center">Preview Election</a>
+    <a href="" class="text-xl text-white bg-amber-800 rounded-xl p-2 mr-5 w-40 text-center">Launch Election</a>
+  </div>
+</body>
+</html>
