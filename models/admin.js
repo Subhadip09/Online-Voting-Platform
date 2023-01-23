@@ -8,34 +8,21 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
       Admin.hasMany(models.Election, {
         foreignKey: "adminId",
-        onDelete: "CASCADE",
+        onDelete: "cascade",
+        onUpdate: "cascade",
+        hooks: true,
       });
-    }
-
-    static addAdmin({ firstName, lastName, email, passwordHash }) {
-      return this.create({
-        firstName,
-        lastName,
-        email,
-        passwordHash,
-      });
+      // define association here
     }
   }
   Admin.init(
     {
       firstName: DataTypes.STRING,
       lastName: DataTypes.STRING,
-      email: {
-        type: DataTypes.STRING,
-        unique: {
-          args: true,
-          msg: "Email is already registered",
-        },
-      },
-      passwordHash: DataTypes.STRING,
+      email: DataTypes.STRING,
+      password: DataTypes.STRING,
     },
     {
       sequelize,
